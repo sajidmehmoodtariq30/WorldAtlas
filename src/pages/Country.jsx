@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -12,6 +12,10 @@ const Country = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortType, setSortType] = useState('')
   const [regionFilter, setRegionFilter] = useState('')
+  const [displayedCountries, setDisplayedCountries] = useState([])
+  const [hasMore, setHasMore] = useState(true)
+  const itemsPerPage = 20
+  const observer = useRef()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -19,6 +23,7 @@ const Country = () => {
       try {
         const response = await axios.get('https://restcountries.com/v3.1/all')
         setCountries(response.data)
+        setDisplayedCountries(response.data.slice(0, itemsPerPage))
         setLoading(false)
       } catch (error) {
         setError('Failed to fetch countries data. Please try again later.')
@@ -29,10 +34,30 @@ const Country = () => {
     fetchCountries()
   }, [])
 
+  const lastCountryElementRef = useCallback(node => {
+    if (loading) return
+    if (observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        loadMoreCountries()
+      }
+    })
+    if (node) observer.current.observe(node)
+  }, [loading, hasMore, countries])
+
+  const loadMoreCountries = () => {
+    const nextIndex = displayedCountries.length
+    const newCountries = countries.slice(nextIndex, nextIndex + itemsPerPage)
+    setDisplayedCountries(prevCountries => [...prevCountries, ...newCountries])
+    if (newCountries.length < itemsPerPage) {
+      setHasMore(false)
+    }
+  }
+
   if (loading) return <div className="text-center text-blue-500 mt-10">Loading countries...</div>
   if (error) return <div className="text-center text-red-500 mt-10">{error}</div>
 
-  const filteredCountries = countries
+  const filteredCountries = displayedCountries
     .filter(country => country.name.common.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(country => regionFilter === '' || country.region === regionFilter)
 
@@ -85,9 +110,10 @@ const Country = () => {
           layout
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6"
         >
-          {sortedCountries.map((country) => (
+          {sortedCountries.map((country, index) => (
             <motion.div
               key={country.cca3}
+              ref={sortedCountries.length === index + 1 ? lastCountryElementRef : null}
               layout
               className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
               whileHover={{ scale: 1.05 }}
