@@ -11,6 +11,7 @@ const Country = () => {
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortType, setSortType] = useState('')
+  const [regionFilter, setRegionFilter] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -31,9 +32,9 @@ const Country = () => {
   if (loading) return <div className="text-center text-blue-500 mt-10">Loading countries...</div>
   if (error) return <div className="text-center text-red-500 mt-10">{error}</div>
 
-  const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredCountries = countries
+    .filter(country => country.name.common.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(country => regionFilter === '' || country.region === regionFilter)
 
   const sortedCountries = filteredCountries.sort((a, b) => {
     switch (sortType) {
@@ -41,8 +42,6 @@ const Country = () => {
       case 'name-desc': return b.name.common.localeCompare(a.name.common)
       case 'population-asc': return a.population - b.population
       case 'population-desc': return b.population - a.population
-      case 'region-asc': return a.region.localeCompare(b.region)
-      case 'region-desc': return b.region.localeCompare(a.region)
       default: return 0
     }
   })
@@ -51,22 +50,48 @@ const Country = () => {
     navigate(`/country/${countryCode}`)
   }
 
+  const uniqueRegions = [...new Set(countries.map(country => country.region))]
+
   return (
     <div className="bg-main min-h-screen p-4">
       <div className="container mx-auto">
-        <h1 className="heading text-4xl font-bold text-center mb-6 text-blue-500">Explore Countries</h1>
+        <motion.h1
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="heading text-4xl font-bold text-center mb-6 text-blue-500"
+        >
+          Explore Countries
+        </motion.h1>
 
-        <div className='flex space-x-6'>
+        <div className="flex flex-col md:flex-row space-x-6">
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           <SortDropdown sortType={sortType} setSortType={setSortType} />
+
+          {/* Region Filter Dropdown */}
+          <select
+            value={regionFilter}
+            onChange={(e) => setRegionFilter(e.target.value)}
+            className="w-3xs h-10 p-2 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          >
+            <option value="">All Regions</option>
+            {uniqueRegions.map(region => (
+              <option key={region} value={region}>{region}</option>
+            ))}
+          </select>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6"
+        >
           {sortedCountries.map((country) => (
             <motion.div
               key={country.cca3}
-              className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+              layout
+              className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
               whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleCountryClick(country.cca3)}
             >
               <img
@@ -79,7 +104,7 @@ const Country = () => {
               <p className="text-gray-400 text-sm">Region: {country.region}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

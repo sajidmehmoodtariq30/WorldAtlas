@@ -13,8 +13,6 @@ const SortDropdown = ({ sortType, setSortType }) => {
         <option value="name-desc">Name (Z-A)</option>
         <option value="population-asc">Population (Low to High)</option>
         <option value="population-desc">Population (High to Low)</option>
-        <option value="region-asc">Region (A-Z)</option>
-        <option value="region-desc">Region (Z-A)</option>
       </select>
     </div>
   )
