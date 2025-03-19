@@ -35,7 +35,7 @@ const CountryDetails = () => {
                         <img
                             src={country.flags.svg}
                             alt={country.name.common}
-                            className="w-full h-60 object-cover rounded-md mb-4"
+                            className="w-full h-96 object-contain rounded-md mb-4"
                         />
                         <h1 className="text-3xl font-bold mb-2">{country.name.common}</h1>
                         <p><strong>Official Name:</strong> {country.name.official}</p>

@@ -17,7 +17,7 @@ const Header = () => {
       </div>
       
       {/* Desktop Links */}
-      <div className="hidden sm:flex space-x-4">
+      <div className="hidden sm:flex space-x-8">
         {['/', '/about', '/contact', '/country'].map((path, index) => (
           <NavLink 
             key={index} 
