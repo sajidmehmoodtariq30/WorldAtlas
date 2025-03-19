@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useFetchCountries from '../hooks/useFetchCountries';
 import CountryCard from '../components/UI/CountryCard';
-import SearchBar from '../components/UI/SearchBar';
+import SearchBar from '../components/UI/searchBar';
 import SortDropdown from '../components/UI/SortDropdown';
 import RegionDropdown from '../components/UI/ReigonDropdown';
 
