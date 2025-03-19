@@ -29,7 +29,7 @@ const CountryDetails = () => {
     return (
         <div className="bg-main min-h-screen p-4">
             <div className="container mx-auto text-white">
-                <Link to="/" className="text-blue-400 underline mb-4 block">⬅ Back to Home</Link>
+                <Link to="/country" className="text-blue-400 underline mb-4 block">⬅ Countries</Link>
                 {country && (
                     <div className="bg-gray-800 p-6 rounded-xl shadow-md">
                         <img
