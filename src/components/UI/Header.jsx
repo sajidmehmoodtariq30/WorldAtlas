@@ -7,9 +7,9 @@ const Header = () => {
   const toggleMenu = () => setIsOpen(!isOpen)
 
   return (
-    <nav className="flex items-center justify-between py-4 px-10 bg-gray-800 shadow-lg">
+    <nav className="flex items-center justify-around h-20 py-4 px-10 bg-gray-800 shadow-lg">
       {/* Brand Name */}
-      <div className="text-xl font-bold text-white">My Website</div>
+      <div className="text-2xl font-bold text-white">My Website</div>
       
       {/* Mobile Menu Icon */}
       <div className="text-gray-300 text-2xl sm:hidden cursor-pointer" onClick={toggleMenu}>

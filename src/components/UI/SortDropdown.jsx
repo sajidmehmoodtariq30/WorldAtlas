@@ -6,7 +6,7 @@ const SortDropdown = ({ sortType, setSortType }) => {
       <select
         value={sortType}
         onChange={(e) => setSortType(e.target.value)}
-        className="w-full p-2 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+        className="w-full h-10 p-2 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
       >
         <option value="">Sort By</option>
         <option value="name-asc">Name (A-Z)</option>

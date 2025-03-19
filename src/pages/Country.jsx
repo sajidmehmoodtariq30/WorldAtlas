@@ -1,139 +1,55 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import SearchBar from '../components/UI/SearchBar'
-import SortDropdown from '../components/UI/SortDropdown'
+import React, { useState } from 'react';
+import useFetchCountries from '../hooks/useFetchCountries';
+import CountryCard from '../components/UI/CountryCard';
+import SearchBar from '../components/UI/SearchBar';
+import SortDropdown from '../components/UI/SortDropdown';
+import RegionDropdown from '../components/UI/ReigonDropdown';
 
 const Country = () => {
-  const [countries, setCountries] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sortType, setSortType] = useState('')
-  const [regionFilter, setRegionFilter] = useState('')
-  const [displayedCountries, setDisplayedCountries] = useState([])
-  const [hasMore, setHasMore] = useState(true)
-  const itemsPerPage = 20
-  const observer = useRef()
-  const navigate = useNavigate()
+  const { allCountries, loading, error, refreshData } = useFetchCountries();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortType, setSortType] = useState('');
+  const [regionFilter, setRegionFilter] = useState('');
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await axios.get('https://restcountries.com/v3.1/all')
-        setCountries(response.data)
-        setDisplayedCountries(response.data.slice(0, itemsPerPage))
-        setLoading(false)
-      } catch (error) {
-        setError('Failed to fetch countries data. Please try again later.')
-        setLoading(false)
-      }
-    }
-
-    fetchCountries()
-  }, [])
-
-  const lastCountryElementRef = useCallback(node => {
-    if (loading) return
-    if (observer.current) observer.current.disconnect()
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadMoreCountries()
-      }
-    })
-    if (node) observer.current.observe(node)
-  }, [loading, hasMore, countries])
-
-  const loadMoreCountries = () => {
-    const nextIndex = displayedCountries.length
-    const newCountries = countries.slice(nextIndex, nextIndex + itemsPerPage)
-    setDisplayedCountries(prevCountries => [...prevCountries, ...newCountries])
-    if (newCountries.length < itemsPerPage) {
-      setHasMore(false)
-    }
-  }
-
-  if (loading) return <div className="text-center text-blue-500 mt-10">Loading countries...</div>
-  if (error) return <div className="text-center text-red-500 mt-10">{error}</div>
-
-  const filteredCountries = displayedCountries
+  const filteredCountries = allCountries
     .filter(country => country.name.common.toLowerCase().includes(searchQuery.toLowerCase()))
-    .filter(country => regionFilter === '' || country.region === regionFilter)
-
-  const sortedCountries = filteredCountries.sort((a, b) => {
-    switch (sortType) {
-      case 'name-asc': return a.name.common.localeCompare(b.name.common)
-      case 'name-desc': return b.name.common.localeCompare(a.name.common)
-      case 'population-asc': return a.population - b.population
-      case 'population-desc': return b.population - a.population
-      default: return 0
-    }
-  })
-
-  const handleCountryClick = (countryCode) => {
-    navigate(`/country/${countryCode}`)
-  }
-
-  const uniqueRegions = [...new Set(countries.map(country => country.region))]
+    .filter(country => !regionFilter || country.region === regionFilter)
+    .sort((a, b) => {
+      if (sortType === 'name-asc') return a.name.common.localeCompare(b.name.common);
+      if (sortType === 'name-desc') return b.name.common.localeCompare(a.name.common);
+      if (sortType === 'population-asc') return a.population - b.population;
+      if (sortType === 'population-desc') return b.population - a.population;
+      return 0;
+    });
 
   return (
     <div className="bg-main min-h-screen p-4">
       <div className="container mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="heading text-4xl font-bold text-center mb-6 text-blue-500"
-        >
-          Explore Countries
-        </motion.h1>
-
-        <div className="flex flex-col md:flex-row space-x-6">
+        <div className="flex flex-col md:flex-row space-x-6 mb-4">
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           <SortDropdown sortType={sortType} setSortType={setSortType} />
-
-          {/* Region Filter Dropdown */}
-          <select
-            value={regionFilter}
-            onChange={(e) => setRegionFilter(e.target.value)}
-            className="w-3xs h-10 p-2 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          <RegionDropdown regionFilter={regionFilter} setRegionFilter={setRegionFilter} />
+          <button
+            onClick={refreshData}
+            className="ml-4 h-10 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
-            <option value="">All Regions</option>
-            {uniqueRegions.map(region => (
-              <option key={region} value={region}>{region}</option>
-            ))}
-          </select>
+            Refresh Data
+          </button>
         </div>
 
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6"
-        >
-          {sortedCountries.map((country, index) => (
-            <motion.div
-              key={country.cca3}
-              ref={sortedCountries.length === index + 1 ? lastCountryElementRef : null}
-              layout
-              className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleCountryClick(country.cca3)}
-            >
-              <img
-                src={country.flags.svg}
-                alt={country.name.common}
-                className="w-full h-40 object-cover rounded-md mb-3"
-              />
-              <h2 className="text-xl text-gray-200 font-bold mb-1">{country.name.common}</h2>
-              <p className="text-gray-400 text-sm">Population: {country.population.toLocaleString()}</p>
-              <p className="text-gray-400 text-sm">Region: {country.region}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {
+          loading ? <div className="text-center text-blue-500">Loading countries...</div>
+            :
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+              {filteredCountries.map(country => (
+                <CountryCard key={country.cca3} country={country} />
+              ))}
+            </div>
+        }
+        {error && <div className="text-center text-red-500">{error}</div>}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Country
+export default Country;
