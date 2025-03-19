@@ -18,7 +18,7 @@ const Contact = () => {
         </p>
 
         {/* Contact Information */}
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 md:space-x-10 mb-8">
+        <div className="flex flex-col  md:flex-row justify-between items-center space-y-6 md:space-y-0 md:space-x-10 mb-8">
           <div className="flex items-center space-x-3">
             <FaEnvelope className="text-blue-500 text-2xl" />
             <span className="text-gray-300">sajidmehmoodtariq5@gmail.com</span>
@@ -36,39 +36,42 @@ const Contact = () => {
         </div>
 
         {/* Contact Form */}
-        <form
-          action="https://formspree.io/f/xdkeagkd"
-          method="POST"
-          className="flex flex-col space-y-4"
-        >
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
-          />
-
-          <textarea
-            name="message"
-            placeholder="Your Message"
-            rows="5"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
-          ></textarea>
-
-          <button
-            type="submit"
-            className="btn-primary mt-4"
+        <div className='flex space-x-6 h-[50vh]'>
+          <img src="/form.png" className='w-1/2 object-fill rounded-3xl' alt="" />
+          <form
+            action="https://formspree.io/f/xdkeagkd"
+            method="POST"
+            className="flex flex-col space-y-4 w-[30vw]"
           >
-            Send Message
-          </button>
-        </form>
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
+            />
+
+            <textarea
+              name="message"
+              placeholder="Your Message"
+              rows="5"
+              className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg outline-none"
+            ></textarea>
+
+            <button
+              type="submit"
+              className="btn-primary mt-4"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
       </motion.div>
     </div>
   )
