@@ -30,10 +30,10 @@ const Footer = () => {
 
         {/* Social Icons */}
         <div className="flex space-x-4">
-          <a href="https://www.linkedin.com/in/your-linkedin-profile" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-all duration-300">
+          <a href="https://www.linkedin.com/in/sajid-mehmood-tariq/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-all duration-300">
             <FaLinkedin size={20} />
           </a>
-          <a href="https://github.com/your-github-profile" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-all duration-300">
+          <a href="https://github.com/sajidmehmoodtariq30" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-all duration-300">
             <FaGithub size={20} />
           </a>
         </div>

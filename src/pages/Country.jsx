@@ -31,7 +31,7 @@ const Country = () => {
           <RegionDropdown regionFilter={regionFilter} setRegionFilter={setRegionFilter} />
           <button
             onClick={refreshData}
-            className="ml-4 h-10 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="p-2 bg-gray-700 h-10 text-white rounded-lg outline-none border border-gray-600"
           >
             Refresh Data
           </button>
