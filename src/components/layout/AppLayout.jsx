@@ -6,9 +6,11 @@ import { Outlet } from 'react-router-dom'
 const AppLayout = () => {
   return (
     <>
-        <Header />
+      <Header />
+      <main className="container py-8">
         <Outlet />
-        <Footer />
+      </main>
+      <Footer />
     </>
   )
 }
